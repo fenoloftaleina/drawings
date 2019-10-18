@@ -30,4 +30,9 @@
               :output-to "resources/public/js/main.js"
               :output-dir "resources/public/js/optimized"
               :asset-path "js/optimized"
-              :optimizations :advanced}}]})
+              :optimizations :advanced}}]}
+  :profiles
+  {:dev
+   {:dependencies [[cider/piggieback "0.4.0"]
+                   [figwheel-sidecar "0.5.16"]]
+    :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}})

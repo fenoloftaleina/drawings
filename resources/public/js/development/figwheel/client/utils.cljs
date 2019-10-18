@@ -5,7 +5,8 @@
             [cljs.reader :refer [read-string]]
             [cljs.pprint :refer [pprint]]
             [goog.userAgent.product :as product])
-  (:import [goog.async Deferred]
+  (:import [goog]
+           [goog.async Deferred]
            [goog.string StringBuffer])
   (:require-macros [figwheel.client.utils :refer [feature?]]))
 
@@ -123,7 +124,7 @@
     a))
 
 (defn persistent-config-set!
-  "Set a local value on a key that in a browser will persist even when
+  "Set a local value on a key that in a browser will persist even when 
 the browser gets reloaded."
   [ky v]
   (swap! local-persistent-config assoc ky v))

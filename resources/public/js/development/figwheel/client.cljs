@@ -13,9 +13,10 @@
    ;; to support repl doc
    [cljs.repl])
   (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]]))
+   [cljs.core.async.macros :refer [go go-loop]])
+  (:import [goog]))
 
-(def _figwheel-version_ "0.5.19")
+(def _figwheel-version_ "0.5.16")
 
 (def js-stringify
   (if (and (exists? js/JSON) (some? js/JSON.stringify))
@@ -194,10 +195,7 @@
       (let [sb (js/goog.string.StringBuffer.)]
         (binding [cljs.core/*print-newline* true
                   cljs.core/*print-fn* (fn [x] (.append sb x))]
-          (let [result-value (utils/eval-helper code opts)
-                result-value (if-not (string? result-value)
-                               (pr-str result-value)
-                               result-value)]
+          (let [result-value (utils/eval-helper code opts)]
             (result-handler
              {:status :success
               :out (str sb)
@@ -352,11 +350,12 @@
     line (str " at line " line)
     (and line column) (str ", column " column)))
 
-(defn default-on-compile-fail [{:keys [exception-data cause] :as ed}]
-  (let [message (cond-> (apply str "Figwheel: Compile Exception " (format-messages exception-data))
-                  (:file exception-data)
-                  (str " Error on " (file-line-column exception-data)))]
-    (utils/log :warn message))
+(defn default-on-compile-fail [{:keys [formatted-exception exception-data cause] :as ed}]
+  (utils/log :debug "Figwheel: Compile Exception")
+  (doseq [msg (format-messages exception-data)]
+    (utils/log :info msg))
+  (if cause
+    (utils/log :info (str "Error on " (file-line-column ed))))
   ed)
 
 (defn default-on-compile-warning [{:keys [message] :as w}]

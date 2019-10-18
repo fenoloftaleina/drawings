@@ -4,35 +4,51 @@
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
-  (q/frame-rate 60)
+  (q/frame-rate 30)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state. It contains
   ; circle color and position.
-  {:color 0
-   :angle 0
-   :vertices []})
+  ;; {:tree-lines (tree-lines (/ (q/width) 2.0) (q/height))})
+  {})
 
-(defn update-state [{:keys [color angle vertices]}]
-  ; Update sketch state by changing circle color and position.
-  {:color (mod (+ color 0.9) 255)
-   :angle (+ angle 0.01)
-   :vertices (conj vertices
-                   [(+ (* 450 (q/cos angle)) (q/random 0))
-                    (+ (* 250 (q/sin (* angle (q/random 4)))) (q/random 0))])
-   })
+(defn tree-lines [x y]
+  (->>
+    (let [middle 160
+          bottom 300
+          ]
+      (loop [vertices-layers [[[middle bottom]]]
+             depth 0]
+        (if (> depth 5)
+          vertices-layers
+          (let [top-vertices (last vertices-layers)
+                new-top-vertices
+                (apply
+                  concat
+                  (mapv (fn [[x y]]
+                          [[(- x 20 (q/random 5)) (- y (* 5 depth depth) (q/random 7))]
+                           [(+ x 20 (q/random 5)) (- y (* 5 depth depth) (q/random 7))]])
+                        top-vertices))]
+            (recur
+              (conj vertices-layers new-top-vertices)
+              (inc depth))))))
+    (partition 2 1)
+    (map (fn [[layer1 layer2]]
+           (for [p1 layer1
+                 p2 layer2]
+             (concat p1 p2))))
+    (apply concat)))
 
-(defn draw-state [{:keys [color vertices]}]
+(defn update-state [state]
+  {:tree-lines (tree-lines (/ (q/width) 2.0) (q/height))})
+  ;; state)
+
+(defn draw-state [{:keys [tree-lines]}]
   ; Clear the sketch by filling it with light-grey color.
-  (q/background 240)
-  ; Set circle color.
-  (q/fill color 255 255)
-  ; Move origin point to the center of the sketch.
-  (q/with-translation [(/ (q/width) 2)
-                       (/ (q/height) 2)]
-    (doseq [[[x1 y1] [x2 y2]] (partition 2 vertices)]
-      ; Draw the circle.
-      (q/line x1 y1 x2 y2))))
+  (q/background 140)
+  (q/stroke-weight 0.3)
+  (doseq [[x1 y1 x2 y2] tree-lines]
+    (q/line x1 y1 x2 y2)))
 
 ; this function is called in index.html
 (defn ^:export run-sketch []

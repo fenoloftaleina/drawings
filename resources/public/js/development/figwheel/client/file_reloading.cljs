@@ -12,7 +12,8 @@
    [cljs.core.async :refer [put! chan <! map< close! timeout alts!] :as async])
   (:require-macros
    [cljs.core.async.macros :refer [go go-loop]])
-  (:import [goog.async Deferred]))
+  (:import [goog]
+           [goog.async Deferred]))
 
 (declare queued-file-reload)
 
