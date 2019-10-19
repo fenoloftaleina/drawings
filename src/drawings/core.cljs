@@ -12,35 +12,80 @@
   ;; {:tree-lines (tree-lines (/ (q/width) 2.0) (q/height))})
   {})
 
-(defn tree-lines [x y]
+(defn tree-lines [x y amp beg-space]
+
+  ;; (partition
+  ;;   4
+  ;;   (flatten
+  ;;     (for [i (range 50 250 0.1)]
+  ;;       [i
+  ;;        (- 250
+  ;;        (-> i
+  ;;            (* 0.01)
+  ;;
+  ;;            q/sin
+  ;;            (* 100)
+  ;;            ))
+  ;;        ]
+  ;;       ))))
+
   (->>
-    (let [middle 160
-          bottom 300
-          ]
-      (loop [vertices-layers [[[middle bottom]]]
+    (let []
+      (loop [vertices-layers [[[x y]] [[x (- y 10)]]]
+             space beg-space
              depth 0]
-        (if (> depth 5)
+        (if (> depth 9)
           vertices-layers
           (let [top-vertices (last vertices-layers)
                 new-top-vertices
                 (apply
                   concat
                   (mapv (fn [[x y]]
-                          [[(- x 20 (q/random 5)) (- y (* 5 depth depth) (q/random 7))]
-                           [(+ x 20 (q/random 5)) (- y (* 5 depth depth) (q/random 7))]])
+                          (let [a (+ space
+                                     (q/random 0)
+                                     )
+                                bf #(+ (* amp
+                                       (q/sin (* 3.14 (/ % (q/width))))
+                                       )
+                                       (q/random 5)
+                                       )
+                                lx (- x a)
+                                rx (+ x a)]
+                          [[lx (- y (bf lx))]
+                           [rx (- y (bf rx))]]))
                         top-vertices))]
             (recur
               (conj vertices-layers new-top-vertices)
+              (* 0.5 space)
               (inc depth))))))
     (partition 2 1)
     (map (fn [[layer1 layer2]]
-           (for [p1 layer1
-                 p2 layer2]
-             (concat p1 p2))))
+           (mapv (fn [p1 p2]
+                   (concat p1 p2))
+                 (interleave layer1 layer1)
+                 layer2)))
     (apply concat)))
 
 (defn update-state [state]
-  {:tree-lines (tree-lines (/ (q/width) 2.0) (q/height))})
+  {:tree-lines (concat (tree-lines (/ (q/width) 2.0) (q/height) 30 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 33 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 29 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 28 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 25 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 20 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 15 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 13 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 10 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 7 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 5 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 3 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 1 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) -1 75)
+                       (tree-lines (/ (q/width) 2.0) (q/height) -2 75)
+                       )})
   ;; state)
 
 (defn draw-state [{:keys [tree-lines]}]
