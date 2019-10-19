@@ -4,7 +4,7 @@
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
-  (q/frame-rate 30)
+  (q/frame-rate 1)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
   ; setup function returns initial state. It contains
@@ -68,23 +68,6 @@
 
 (defn update-state [state]
   {:tree-lines (concat (tree-lines (/ (q/width) 2.0) (q/height) 30 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 33 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 29 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 28 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 25 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 20 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 15 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 13 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 10 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 7 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 5 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 3 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 1 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) 0 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) -1 75)
-                       (tree-lines (/ (q/width) 2.0) (q/height) -2 75)
                        )})
   ;; state)
 
